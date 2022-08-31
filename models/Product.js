@@ -15,6 +15,10 @@ const ProductSchema = new mongoose.Schema({
     type: Number,
     required: [true, "This field is required"],
   },
+  images: [String],
+  brand: String,
+  category: String,
+  discountPercentage: Number,
 });
 
 module.exports = mongoose.model("Product", ProductSchema);

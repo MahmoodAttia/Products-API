@@ -1,34 +1,42 @@
+const { createErrorHandler } = require("../errors/custom-error-handler");
+const asyncWrapper = require("../middlewares/async-wrapper");
 const Product = require("../models/Product");
 
-const getProducts = async (req, res, next) => {
+const getProducts = asyncWrapper(async (req, res, next) => {
   const product = await Product.find({});
-  res.status(200).json({ status: "success", data: product });
-};
+  res.status(200).json({ status: true, data: product });
+});
 
-const getProduct = async (req, res, next) => {
+const getProduct = asyncWrapper(async (req, res, next) => {
   const { id: productID } = req.params;
   const product = await Product.findOne({ _id: productID });
-  res.status(200).json({ status: "success", data: product });
-};
+  product
+    ? res.status(200).json({ status: true, data: product })
+    : next(createErrorHandler(404, `Product with id ${productID} not found`));
+});
 
-const addProduct = async (req, res, next) => {
+const addProduct = asyncWrapper(async (req, res, next) => {
   const product = await Product.create(req.body);
-  res.status(200).json({ status: "success", data: product });
-};
+  res.status(200).json({ status: true, data: product });
+});
 
-const updateProduct = async (req, res, next) => {
+const updateProduct = asyncWrapper(async (req, res, next) => {
   const { id: productID } = req.params;
   const product = await Product.findOneAndUpdate({ _id: productID }, req.body, {
     new: true,
   });
-  res.status(200).json({ status: "success", data: product });
-};
+  product
+    ? res.status(200).json({ status: true, data: product })
+    : next(createErrorHandler(404, `Product with id ${productID} not found`));
+});
 
-const deleteProduct = async (req, res, next) => {
+const deleteProduct = asyncWrapper(async (req, res, next) => {
   const { id: productID } = req.params;
   const product = await Product.findOneAndDelete({ _id: productID });
-  res.status(200).json({ status: "success", data: product });
-};
+  product
+    ? res.status(200).json({ status: true, data: product })
+    : next(createErrorHandler(404, `Product with id ${productID} not found`));
+});
 
 module.exports = {
   addProduct,
